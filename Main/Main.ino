@@ -4,13 +4,10 @@ Created:	3/13/2016 6:43:19 PM
 Author:	hejtmy
 */
 String serialInput;
-
 int timeout = 25;
 bool connected = false;
 //speed for the delay factor
 int speed = 20;
-
-enum Orders {BLINK, WRITE};
 
 // the setup function runs once when you press reset or power the board
 void setup() {
@@ -24,7 +21,6 @@ void setup() {
 // the loop function runs over and over again until power down or reset
 void loop() {
 	while (!connected) {
-		
 		serialInput = Serial.readStringUntil('\n');
 		if (serialInput == "WHO") {
 			lettingKnow();
@@ -49,17 +45,22 @@ void lettingKnow() {
 }
 
 void ListenForOrders() {
-	serialInput = Serial.readStringUntil('\n');
-	if(serialInput != "")
-		switch (serialInput) {
-		case 'BLINK':
-			break;
-		default:
-			break;
+	while (true) {
+		serialInput = Serial.readStringUntil('\n');
+		if (serialInput != "") {
+			if (serialInput == "RESTART") {
+				break;
+			}
+			if (serialInput == "SENDPULSE") {
+				break;
+			}
+			if (serialInput == "BLINK") {
+				digitalWrite(13, HIGH);
+				delay(100);
+				digitalWrite(13, LOW);
+				break;
+			}
 		}
-	delay(speed);
-}
-
-Orders ConvertSerialReadToEnum(String str) {
-
+		delay(speed);
+	}
 }

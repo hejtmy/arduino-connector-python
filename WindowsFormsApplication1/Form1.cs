@@ -22,12 +22,6 @@ namespace WindowsFormsApplication1
         {
 
         }
-
-        private void TakeReading()
-        {
-            label1.Text = arduino.TakeReading();
-        }
-
         private void Connect()
         {
             arduino.Disconnect();
@@ -38,6 +32,11 @@ namespace WindowsFormsApplication1
         private void button1_Click(object sender, EventArgs e)
         {
            Connect();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            arduino.Blink();
         }
     }
 }

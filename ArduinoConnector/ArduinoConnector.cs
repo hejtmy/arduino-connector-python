@@ -43,12 +43,15 @@ namespace ArduinoConnector
             return port;
         }
 
+        public bool IsOpen()
+        {
+            if (_port != null && _port.IsOpen) return true;
+            return false;
+        }
+
         public void Disconnect()
         {
-            if (_port != null && _port.IsOpen)
-            {
-                _port.Close();
-            }
+            if (_port != null && _port.IsOpen) _port.Close();
         }
 
         private bool ListenForMessage()
@@ -74,25 +77,12 @@ namespace ArduinoConnector
             Thread.Sleep(50);
         }
 
-        public string TakeReading()
+        public void Blink()
         {
-            SerialPort port = SetupConnection("COM5");
-           
-            string info;
-            try
+            if (IsOpen())
             {
-                port.Open();
-                port.ReadTimeout = 200;
-                info = port.ReadLine();
-                Console.WriteLine(info);
-                port.Close();
+                _port.WriteLine("BLINK");
             }
-            catch (Exception e)
-            {
-                port.Close();
-                return "nothing";
-            }
-            return info;
         }
     }
 }

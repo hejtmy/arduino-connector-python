@@ -54,11 +54,11 @@ namespace ArduinoConnector
         private bool ListenForMessage()
         {
             string info;
-            _port.WriteLine("111");
+            _port.WriteLine("WHO");
             try
             {
                 WaitForLine();
-                _port.ReadTimeout = 1500;
+                _port.ReadTimeout = 200;
                 info = _port.ReadLine();
                 Console.WriteLine(info);
             }
@@ -66,12 +66,12 @@ namespace ArduinoConnector
             {
                 return false;
             }
-            return info.Contains("666");
+            return info.Contains("ARDUINO");
         }
 
         private void WaitForLine()
         {
-            Thread.Sleep(200);
+            Thread.Sleep(50);
         }
 
         public string TakeReading()

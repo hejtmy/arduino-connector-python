@@ -8,7 +8,7 @@ int timeout = 25;
 bool connected = false;
 //speed for the delay factor
 int speed = 20;
-
+int i = 0;
 // the setup function runs once when you press reset or power the board
 void setup() {
 	Serial.begin(9600);
@@ -20,26 +20,26 @@ void setup() {
 
 // the loop function runs over and over again until power down or reset
 void loop() {
-	while (!connected) {
+	if (!connected) {
 		serialInput = Serial.readStringUntil('\n');
 		if (serialInput == "WHO") {
 			lettingKnow();
 		}
-		delay(speed);
 	}
-	while (true) {
+	if (connected) {
 		ListenForOrders();
 	}
 }
 
 void lettingKnow() {
-	while (true) {
+	float time = millis();
+	while (!connected) {
 		serialInput = Serial.readStringUntil('\n');
 		if (serialInput == "DONE") {
 			connected = true;
-			break;
 		}
 		Serial.println("ARDUINO");
+		if (millis() - time > 1000) { break; }
 		delay(speed);
 	}
 }
@@ -49,16 +49,15 @@ void ListenForOrders() {
 		serialInput = Serial.readStringUntil('\n');
 		if (serialInput != "") {
 			if (serialInput == "RESTART") {
+				connected = false;
 				break;
 			}
 			if (serialInput == "SENDPULSE") {
-				break;
 			}
 			if (serialInput == "BLINK") {
 				digitalWrite(13, HIGH);
 				delay(100);
 				digitalWrite(13, LOW);
-				break;
 			}
 		}
 		delay(speed);

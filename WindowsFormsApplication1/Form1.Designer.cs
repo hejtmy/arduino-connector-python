@@ -3,7 +3,6 @@ namespace WindowsFormsApplication1
 {
     partial class Form1
     {
-
         Arduino arduino = new Arduino();
         private static bool thing = false;
         /// <summary>

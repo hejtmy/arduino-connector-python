@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO.Ports;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace ArduinoConnector
 {
@@ -43,6 +41,15 @@ namespace ArduinoConnector
             return port;
         }
 
+        public string ReadMessage()
+        {
+            if (IsOpen())
+            {
+                return _port.ReadLine();
+            }
+            return null;
+        }
+
         public bool IsOpen()
         {
             if (_port != null && _port.IsOpen) return true;
@@ -60,8 +67,8 @@ namespace ArduinoConnector
             _port.WriteLine("WHO");
             try
             {
-                WaitForLine();
-                _port.ReadTimeout = 200;
+                //WaitForLine();
+                _port.ReadTimeout = 50;
                 info = _port.ReadLine();
                 Console.WriteLine(info);
             }
@@ -74,7 +81,7 @@ namespace ArduinoConnector
 
         private void WaitForLine()
         {
-            Thread.Sleep(50);
+            Thread.Sleep(10);
         }
 
         public void Blink()

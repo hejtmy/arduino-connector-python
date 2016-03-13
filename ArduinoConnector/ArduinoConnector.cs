@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO.Ports;
-using System.Threading;
 
 namespace ArduinoConnector
 {
@@ -77,11 +76,6 @@ namespace ArduinoConnector
                 return false;
             }
             return info.Contains("ARDUINO");
-        }
-
-        private void WaitForLine()
-        {
-            Thread.Sleep(10);
         }
 
         public void Blink()

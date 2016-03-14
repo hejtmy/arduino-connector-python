@@ -52,7 +52,7 @@ namespace ArduinoConnector
         {
             if (IsOpen())
             {
-                _port.WriteLine("RESTART");
+                _port.WriteLine("RESTART!");
                 return;
             }
             SerialPort port;
@@ -62,7 +62,7 @@ namespace ArduinoConnector
                 port = SetupConnection(_comPort);
                 if (port.IsOpen)
                 {
-                    port.WriteLine("RESTART");
+                    port.WriteLine("RESTART!");
                     return;
                 }
             }
@@ -73,17 +73,17 @@ namespace ArduinoConnector
                 port = SetupConnection(comPort);
                 if (port.IsOpen)
                 {
-                    port.WriteLine("RESTART");
+                    port.WriteLine("RESTART!");
                 }
             }
         }
         public void Blink()
         {
-            if (IsOpen()) _port.WriteLine("BLINK");
+            if (IsOpen()) _port.WriteLine("BLINK!");
         }
         #endregion
         #region PRIVATE
-#region Establishing connection
+        #region Establishing connection
 
         /// <summary>
         /// Loops through all open ports and tries to connect and get a response.
@@ -145,7 +145,7 @@ namespace ArduinoConnector
         private bool ListenForConnectionMessage(SerialPort port)
         {
             string info;
-            port.WriteLine("WHO");
+            port.WriteLine("WHO!");
             try
             {
                 port.ReadTimeout = 50;
@@ -168,9 +168,9 @@ namespace ArduinoConnector
         /// </summary>
         private void SendDone(SerialPort port)
         {
-            port.WriteLine("DONE");
+            port.WriteLine("DONE!");
         }
         #endregion
-#endregion
+        #endregion
     }
 }

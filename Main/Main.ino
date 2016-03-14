@@ -8,7 +8,9 @@ int timeout = 25;
 bool connected = false;
 //speed for the delay factor
 int speed = 20;
-int i = 0;
+
+char untilChar = '\!';
+
 // the setup function runs once when you press reset or power the board
 void setup() {
 	Serial.begin(9600);
@@ -20,7 +22,7 @@ void setup() {
 
 // the loop function runs over and over again until power down or reset
 void loop() {
-	serialInput = Serial.readStringUntil('\n');
+	serialInput = Serial.readStringUntil(untilChar);
 	if (serialInput != "") {
 		if (serialInput == "WHO") {
 			lettingKnow();
@@ -34,7 +36,7 @@ void loop() {
 void lettingKnow() {
 	float time = millis();
 	while (true) {
-		serialInput = Serial.readStringUntil('\n');
+		serialInput = Serial.readStringUntil(untilChar);
 		if (serialInput == "DONE") {
 			connected = true;
 			break;

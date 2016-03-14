@@ -25,16 +25,23 @@ namespace WindowsFormsApplication1
         private void Connect()
         {
             arduino.Disconnect();
-            if (arduino.TryConnect()) label2.Text = "YES!";
+            if (arduino.Connect()) label2.Text = "YES!";
             label1.Text = arduino.ComPort;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-           Connect();
+            label2.Text = "NO!";
+            Connect();
         }
 
         private void button2_Click(object sender, EventArgs e)
+        {
+            label2.Text = "NO!";
+            arduino.Disconnect();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
         {
             arduino.Blink();
         }

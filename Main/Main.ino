@@ -20,23 +20,24 @@ void setup() {
 
 // the loop function runs over and over again until power down or reset
 void loop() {
-	if (!connected) {
-		serialInput = Serial.readStringUntil('\n');
+	serialInput = Serial.readStringUntil('\n');
+	if (serialInput != "") {
 		if (serialInput == "WHO") {
 			lettingKnow();
+		}	
+		if (connected) {
+			ListenForOrders();
 		}
-	}
-	if (connected) {
-		ListenForOrders();
 	}
 }
 
 void lettingKnow() {
 	float time = millis();
-	while (!connected) {
+	while (true) {
 		serialInput = Serial.readStringUntil('\n');
 		if (serialInput == "DONE") {
 			connected = true;
+			break;
 		}
 		Serial.println("ARDUINO");
 		if (millis() - time > 1000) { break; }
@@ -45,21 +46,17 @@ void lettingKnow() {
 }
 
 void ListenForOrders() {
-	while (true) {
-		serialInput = Serial.readStringUntil('\n');
-		if (serialInput != "") {
-			if (serialInput == "RESTART") {
-				connected = false;
-				break;
-			}
-			if (serialInput == "SENDPULSE") {
-			}
-			if (serialInput == "BLINK") {
-				digitalWrite(13, HIGH);
-				delay(100);
-				digitalWrite(13, LOW);
-			}
+	if (serialInput != "") {
+		if (serialInput == "RESTART") {
+			connected = false;
 		}
-		delay(speed);
+		if (serialInput == "SENDPULSE") {
+		}
+		if (serialInput == "BLINK") {
+			digitalWrite(13, HIGH);
+			delay(100);
+			digitalWrite(13, LOW);
+		}
 	}
+	delay(speed);
 }

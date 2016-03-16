@@ -81,6 +81,22 @@ namespace ArduinoConnector
         {
             if (IsOpen()) _port.WriteLine("BLINK!");
         }
+        public void SendPuls(bool bo)
+        {
+            if (IsOpen())
+            {
+                switch (bo)
+                {
+                    case true:
+                        _port.WriteLine("PULSE+!");
+                        break;
+                    case false:
+                        _port.WriteLine("PULSE-!");
+                        break;
+                }
+            }
+        }
+
         #endregion
         #region PRIVATE
         #region Establishing connection

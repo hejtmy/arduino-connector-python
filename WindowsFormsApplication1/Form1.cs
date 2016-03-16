@@ -45,5 +45,15 @@ namespace WindowsFormsApplication1
         {
             arduino.Blink();
         }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            arduino.SendPuls(true);
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            arduino.SendPuls(false);
+        }
     }
 }

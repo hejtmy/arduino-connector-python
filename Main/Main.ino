@@ -54,6 +54,12 @@ void ListenForOrders() {
 		}
 		if (serialInput == "SENDPULSE") {
 		}
+		if (serialInput == "PULSE+") {
+			digitalWrite(13, HIGH);
+		}
+		if (serialInput == "PULSE-") {
+			digitalWrite(13, LOW);
+		}
 		if (serialInput == "BLINK") {
 			digitalWrite(13, HIGH);
 			delay(100);

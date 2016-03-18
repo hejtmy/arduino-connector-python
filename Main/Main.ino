@@ -51,19 +51,24 @@ void ListenForOrders() {
 	if (serialInput != "") {
 		if (serialInput == "RESTART") {
 			connected = false;
+			Serial.println("DONE");
 		}
 		if (serialInput == "SENDPULSE") {
+			Serial.println("DONE");
 		}
 		if (serialInput == "PULSE+") {
 			digitalWrite(13, HIGH);
+			Serial.println("DONE");
 		}
 		if (serialInput == "PULSE-") {
 			digitalWrite(13, LOW);
+			Serial.println("DONE");
 		}
 		if (serialInput == "BLINK") {
 			digitalWrite(13, HIGH);
 			delay(100);
 			digitalWrite(13, LOW);
+			Serial.println("DONE");
 		}
 	}
 	delay(speed);

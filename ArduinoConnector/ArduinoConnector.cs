@@ -4,21 +4,21 @@ using System.IO.Ports;
 namespace ArduinoConnector
 {
     public enum ArduinoType {Leonardo, Uno, Generic}
-
+    public enum ArduinoEvent { DONE}
     public class Arduino
     {
+        public delegate void SerialInputHandler(ArduinoEvent arduinoEvent);
+        public event SerialInputHandler DataIncomming;
 
         private SerialPort _port;
         private string _comPort;
 
-        private ArduinoType _arduinoType;
-
+        private readonly ArduinoType _arduinoType;
         public string ComPort => _comPort;
         public Arduino(ArduinoType type)
         {
             _arduinoType = type;
         }
-
         #region PUBLIC API
         /// <summary>
         /// Loops through open serial ports and tries to connect to arduino sketch
@@ -27,9 +27,14 @@ namespace ArduinoConnector
         public bool Connect()
         {
             _port = TryPorts();
-            if (IsOpen()) _comPort = _port.PortName;
+            if (IsOpen())
+            {
+                _comPort = _port.PortName;
+                _port.DataReceived += SendIncommingData;
+            }
             return IsOpen();
         }
+
         public string ReadMessage()
         {
             if (IsOpen()) return _port.ReadLine();
@@ -48,10 +53,15 @@ namespace ArduinoConnector
             Restart();
             if (IsOpen()) _port.Close();
         }
+        public SerialPort GetSerialPort()
+        {
+            return _port;
+        }
         public void Restart()
         {
             if (IsOpen())
             {
+                _port.DataReceived -= SendIncommingData;
                 _port.WriteLine("RESTART!");
                 return;
             }
@@ -96,7 +106,6 @@ namespace ArduinoConnector
                 }
             }
         }
-
         #endregion
         #region PRIVATE
         #region Establishing connection
@@ -149,7 +158,7 @@ namespace ArduinoConnector
             if (_arduinoType == ArduinoType.Leonardo)
             {
                 port.DtrEnable = true;
-                port.RtsEnable = false;
+                port.RtsEnable = true;
             }
             return port;
         }
@@ -185,6 +194,27 @@ namespace ArduinoConnector
         private void SendDone(SerialPort port)
         {
             port.WriteLine("DONE!");
+        }
+        #endregion
+        #region Event handling
+        private void SendIncommingData(object sender, SerialDataReceivedEventArgs e)
+        {
+
+            if (DataIncomming != null)
+            {
+                SerialPort sp = (SerialPort)sender;
+                string indata = sp.ReadLine();
+                //clear input from arduino is "DONE\r\n" - serial has default setting newline character to \n 
+                //It can be either changed to \r\n in serial setup or we just cheat it like this
+                switch (indata)
+                {
+                    case "DONE\r":
+                        DataIncomming(ArduinoEvent.DONE);
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
         #endregion
         #endregion

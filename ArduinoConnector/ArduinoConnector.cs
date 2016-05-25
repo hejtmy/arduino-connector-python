@@ -26,6 +26,7 @@ namespace ArduinoConnector
         /// <returns></returns>
         public bool Connect()
         {
+            if (IsOpen()) return true;
             _port = TryPorts();
             if (IsOpen())
             {
@@ -34,7 +35,6 @@ namespace ArduinoConnector
             }
             return IsOpen();
         }
-
         public string ReadMessage()
         {
             if (IsOpen()) return _port.ReadLine();
@@ -50,8 +50,10 @@ namespace ArduinoConnector
         /// </summary>
         public void Disconnect()
         {
-            Restart();
-            if (IsOpen()) _port.Close();
+            if (IsOpen())
+                _port.DataReceived -= SendIncommingData;
+                SendMessage("RESTART");
+                _port.Close();
         }
         public SerialPort GetSerialPort()
         {
@@ -62,34 +64,30 @@ namespace ArduinoConnector
             if (IsOpen())
             {
                 _port.DataReceived -= SendIncommingData;
-                _port.WriteLine("RESTART!");
+                SendMessage("RESTART");
                 return;
             }
             SerialPort port;
-            string comPort;
             if (!String.IsNullOrEmpty(_comPort))
             {
                 port = SetupConnection(_comPort);
                 if (port.IsOpen)
                 {
-                    port.WriteLine("RESTART!");
+                    SendMessage("RESTART", port);
                     return;
                 }
             }
             //otherwise we loop through all the way - will redo in the future.
             foreach (string portName in SerialPort.GetPortNames())
             {
-                comPort = portName;
+                var comPort = portName;
                 port = SetupConnection(comPort);
-                if (port.IsOpen)
-                {
-                    port.WriteLine("RESTART!");
-                }
+                if (port.IsOpen) SendMessage("RESTART", port);
             }
         }
         public void Blink()
         {
-            if (IsOpen()) _port.WriteLine("BLINK!");
+            SendMessage("BLINK");
         }
         public void SendPuls(bool bo)
         {
@@ -98,18 +96,21 @@ namespace ArduinoConnector
                 switch (bo)
                 {
                     case true:
-                        _port.WriteLine("PULSE+!");
+                        SendMessage("PULSE+");
                         break;
                     case false:
-                        _port.WriteLine("PULSE-!");
+                        SendMessage("PULSE-!");
                         break;
                 }
             }
         }
+        public void SendMessage(string message)
+        {
+            if (IsOpen()) SendMessage(message, _port);
+        }
         #endregion
         #region PRIVATE
         #region Establishing connection
-
         /// <summary>
         /// Loops through all open ports and tries to connect and get a response.
         /// </summary>
@@ -118,22 +119,23 @@ namespace ArduinoConnector
         {
             if (IsOpen()) Disconnect();
             SerialPort port;
-            string comPort;
             //firstly triels the last port it was connected to 
             if (!String.IsNullOrEmpty(_comPort))
             {
                 port = SetupConnection(_comPort);
                 if (TryArduinoConnect(port)) return port;
             }
+            //iterrates through all ports available and tries to connect
             foreach (string portName in SerialPort.GetPortNames())
             {
-                comPort = portName;
+                var comPort = portName;
                 port = SetupConnection(comPort);
                 if (TryArduinoConnect(port)) return port;
                 Disconnect();
             }
             return null;
         }
+        //sends message to arduino and listens for arduino messaging 
         bool TryArduinoConnect(SerialPort port)
         {
             try
@@ -199,7 +201,6 @@ namespace ArduinoConnector
         #region Event handling
         private void SendIncommingData(object sender, SerialDataReceivedEventArgs e)
         {
-
             if (DataIncomming != null)
             {
                 SerialPort sp = (SerialPort)sender;
@@ -217,6 +218,11 @@ namespace ArduinoConnector
             }
         }
         #endregion
+        private void SendMessage(string message, SerialPort port)
+        {
+            message = message + "!";
+            port.WriteLine(message);
+        }
         #endregion
     }
 }

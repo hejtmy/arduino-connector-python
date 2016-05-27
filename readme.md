@@ -6,23 +6,23 @@ Two other projects are testers for the dll.
 1. Upload .ino to the arduino.
 2. Add the dll to your project.
 3. Instantiate Arduino class
-```c#
-var arduino = new ArduinoConnector(ArduinoType.Leonardo)
-if(arduino.Connect()) Debug.Log('Connects');
+  ```c#
+  var arduino = new ArduinoConnector(ArduinoType.Leonardo)
+  if(arduino.Connect()) Debug.Log('Connects');
+  ```
 
-arduino.Disconnect();
-```
 4. Play with it
-```c#
-arduino.Blink();
+  ```c#
+  arduino.Blink();
 
-void PrintLine(ArduinoEvent arduinoEvent){Console.Write(arduinoEvent.ToString());};
-arduino.DataIncomming =+ PrintLine;
+  void PrintLine(ArduinoEvent arduinoEvent){Console.Write(arduinoEvent.ToString());};
+  arduino.DataIncomming =+ PrintLine;
 
-adruino.SendPulse(true);
-adruino.SendPulse(false);
-```
+  adruino.SendPulse(true);
+  adruino.SendPulse(false);
+  ```
+
 5. Disconnect
-```c#
-arduino.Disconnect();
-```
+  ```c#
+  arduino.Disconnect();
+  ```

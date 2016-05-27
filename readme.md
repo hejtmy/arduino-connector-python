@@ -16,7 +16,7 @@ Two other projects are testers for the dll.
   arduino.Blink();
 
   void PrintLine(ArduinoEvent arduinoEvent){Console.Write(arduinoEvent.ToString());};
-  arduino.DataIncomming =+ PrintLine;
+  arduino.DataIncomming += PrintLine;
 
   adruino.SendPulse(true);
   adruino.SendPulse(false);

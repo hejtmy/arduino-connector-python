@@ -12,6 +12,7 @@ def serial_ports(upTo = 256):
     """
     if sys.platform.startswith('win'):
         ports = ['COM%s' % (i + 1) for i in range(upTo)]
+        print(ports)
     elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
         # this excludes your current terminal "/dev/tty"
         ports = glob.glob('/dev/tty[A-Za-z]*')
@@ -29,4 +30,4 @@ def serial_ports(upTo = 256):
             pass
     return result
 
-print(serial_ports())
+print(serial_ports(10))

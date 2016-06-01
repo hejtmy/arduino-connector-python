@@ -1,6 +1,6 @@
 from Arduino import *
 
-arduino = Arduino()
+arduino = Arduino(port="COM4")
 arduino.connect()
 print(arduino.isOpen())
 arduino.blink()

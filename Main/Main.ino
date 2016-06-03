@@ -6,8 +6,19 @@ Author:	hejtmy
 String serialInput;
 int timeout = 25;
 bool connected = false;
+bool photoresistorUse = false;
 //speed for the delay factor
 int speed = 20;
+
+//pin setup
+int pulsePin = 13;
+int photoresistorPin = 0;
+int buttonRedPin = 7;
+int buttonBluePin = 6;
+int buttonYellowPin = 5;
+int buttonGreenPin = 4;
+
+int photoresistorThreshold = 500;
 
 char untilChar = '\!';
 
@@ -29,6 +40,12 @@ void loop() {
 		}	
 		if (connected) {
 			ListenForOrders();
+		}
+		if (photoresistorUse) {
+			if (analogRead(photoresistorPin) > photoresistorThreshold) {
+				//doSth
+				//do it only once?
+			}
 		}
 	}
 }
@@ -68,6 +85,14 @@ void ListenForOrders() {
 			digitalWrite(13, HIGH);
 			delay(100);
 			digitalWrite(13, LOW);
+			Serial.println("DONE");
+		}
+		if (serialInput == "PHOTO+") {
+			photoresistorUse = true;
+			Serial.println("DONE");
+		}
+		if (serialInput == "PHOTO-") {
+			photoresistorUse = false;
 			Serial.println("DONE");
 		}
 	}

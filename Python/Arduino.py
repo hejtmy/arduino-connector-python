@@ -64,7 +64,7 @@ class Arduino():
         return(self.arduinoConnection.isOpen())
     def disconnect(self):
         if(self.isOpen()):
-            self.restart()
+            self.reset()
             self.arduinoConnection.close()
     def reset(self):
         if (self.isOpen()):

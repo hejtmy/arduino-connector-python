@@ -7,6 +7,7 @@ String serialInput;
 int timeout = 25;
 bool connected = false;
 bool photoresistorUse = false;
+bool pulsing = false;
 //speed for the delay factor
 int speed = 20;
 
@@ -29,6 +30,7 @@ void setup() {
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB
   }
+  pinMode(pulsePin,OUTPUT); //sets the pulse pin
 }
 
 // the loop function runs over and over again until power down or reset
@@ -62,7 +64,6 @@ void lettingKnow() {
     delay(speed);
   }
 }
-
 void ListenForOrders() {
   if (serialInput != "") {
     if (serialInput == "RESTART") {
@@ -73,11 +74,11 @@ void ListenForOrders() {
       Serial.println("DONE");
     }
     if (serialInput == "PULSE+") {
-      digitalWrite(13, HIGH);
+      StartPulse();
       Serial.println("DONE");
     }
     if (serialInput == "PULSE-") {
-      digitalWrite(13, LOW);
+      CancelPulse();
       Serial.println("DONE");
     }
     if (serialInput == "BLINK") {
@@ -107,5 +108,13 @@ void PhotoresistorAction(){
   } else {
     alreadyReacted = false;
   }
+}
+void StartPulse(){
+  pulsing = true; // no fuctionality yet
+  digitalWrite(pulsePin, HIGH);
+}
+void CancelPulse(){
+  pulsing = false; // no fuctionality yet
+  digitalWrite(pulsePin, LOW);
 }
 

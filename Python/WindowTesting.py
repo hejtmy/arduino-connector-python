@@ -7,7 +7,7 @@ def onKeyPress(event):
     key = ord(event.char);
     if key == 32:  # space
         arduino.connect()
-        if(arduino.isOpen()): text.insert('end', "Connected")
+        if(arduino.is_open()): text.insert('end', "Connected")
         else: text.insert('end', "Not connected")
     if key == 27:  # ESC
         text.insert('end', "Disconnecting")

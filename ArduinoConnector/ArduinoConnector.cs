@@ -51,9 +51,11 @@ namespace ArduinoConnector
         public void Disconnect()
         {
             if (IsOpen())
+            {
                 _port.DataReceived -= SendIncommingData;
                 SendMessage("RESTART");
                 _port.Close();
+            }   
         }
         public SerialPort GetSerialPort()
         {

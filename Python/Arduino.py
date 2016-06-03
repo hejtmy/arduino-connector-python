@@ -35,6 +35,7 @@ class Arduino():
         connection.port = port
         connection.rts = True
         connection.dtr = True
+        connection.timeout = 0.05;
         try:
             connection.open()
         except Exception as ex:
@@ -55,7 +56,6 @@ class Arduino():
         if connection is None:
             connection = self.arduinoConnection
         try:
-            connection.timeout = 0.05;
             line = connection.readline();
             return line.decode("utf-8");
         except Exception as ex:
@@ -67,10 +67,11 @@ class Arduino():
             self.restart()
             self.arduinoConnection.close()
     def reset(self):
-        if (self.arduinoConnection.isOpen()):
+        if (self.isOpen()):
             self.sendMessage("RESET")
     def blink(self):
-        self.sendMessage("BLINK")
+        if self.isOpen():
+            self.sendMessage("BLINK")
     def sendPrepared(self):
         self.sendMessage("DONE")
     def sendMessage(self,message):

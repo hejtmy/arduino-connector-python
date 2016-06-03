@@ -62,6 +62,13 @@ class Arduino():
         if self.is_open():
             self._send_message("PULSE+")
 
+    def photoresistor_start(self):
+        if self.is_open():
+            self._send_message("PHOTO+")
+
+    def photoresistor_stop(self):
+        if self.is_open():
+            self._send_message("PHOTO-")
 
     # PRIVATE CONNECTION PART
     '''

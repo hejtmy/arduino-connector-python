@@ -43,10 +43,7 @@ void loop() {
     }
   }
   if (photoresistorUse) {
-    if (analogRead(photoresistorPin) > photoresistorThreshold) {
-      //doSth
-      //do it only once?
-    }
+    PhotoresistorAction();
   }
 }
 
@@ -100,3 +97,15 @@ void ListenForOrders() {
   }
   delay(speed);
 }
+void PhotoresistorAction(){
+  static bool alreadyReacted = false;
+  if (analogRead(photoresistorPin) > photoresistorThreshold) {
+      if(!alreadyReacted){
+        alreadyReacted = true;
+        //do sth
+      }
+  } else {
+    alreadyReacted = false;
+  }
+}
+

@@ -10,6 +10,7 @@ String serialInput;
 int timeout = 25;
 bool connected = false;
 bool photoresistorUse = false;
+bool pulsing = false;
 //speed for the delay factor
 int speed = 20;
 
@@ -74,7 +75,6 @@ void lettingKnow() {
     delay(speed);
   }
 }
-
 void ListenForOrders() {
   if (serialInput != "") {
     if (serialInput == "RESTART") {
@@ -85,11 +85,11 @@ void ListenForOrders() {
       Serial.println("DONE");
     }
     if (serialInput == "PULSE+") {
-      digitalWrite(13, HIGH);
+      StartPulse();
       Serial.println("DONE");
     }
     if (serialInput == "PULSE-") {
-      digitalWrite(13, LOW);
+      CancelPulse();
       Serial.println("DONE");
     }
     if (serialInput == "BLINK") {
@@ -131,5 +131,13 @@ void ButtonsAction(){
       Serial.println(buttonColours[i]);
     }
   }
+}
+void StartPulse(){
+  pulsing = true; // no fuctionality yet
+  digitalWrite(pulsePin, HIGH);
+}
+void CancelPulse(){
+  pulsing = false; // no fuctionality yet
+  digitalWrite(pulsePin, LOW);
 }
 

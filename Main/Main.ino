@@ -3,6 +3,8 @@
   Created:	3/13/2016 6:43:19 PM
   Author:	hejtmy
 */
+#include <Keyboard.h>
+
 String serialInput;
 int timeout = 25;
 bool connected = false;
@@ -13,10 +15,10 @@ int speed = 20;
 //pin setup
 int pulsePin = 13;
 int photoresistorPin = 0;
-int buttonRedPin = 7;
-int buttonBluePin = 6;
-int buttonYellowPin = 5;
-int buttonGreenPin = 4;
+char* buttonColours[4] = {"RED","BLUE","YELLOW","GREEN"};
+int buttonPins[4] = {7, 6, 5, 4};
+//ascii chars representing
+char buttonKeys[4] = {'a','d','j','l'};
 
 int photoresistorThreshold = 500;
 
@@ -24,10 +26,15 @@ char untilChar = '\!';
 
 // the setup function runs once when you press reset or power the board
 void setup() {
+  Keyboard.begin();
   Serial.begin(9600);
   Serial.setTimeout(timeout);
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB
+  }
+  //initialise buttons
+  for(int i = 0; i < sizeof(buttonPins);i++){
+    pinMode(buttonPins[i], INPUT);
   }
 }
 
@@ -42,8 +49,11 @@ void loop() {
       ListenForOrders();
     }
   }
-  if (photoresistorUse) {
-    PhotoresistorAction();
+  if (connected){
+    if (photoresistorUse) {
+      PhotoresistorAction();
+    }
+    ButtonsAction();
   }
 }
 
@@ -106,6 +116,14 @@ void PhotoresistorAction(){
       }
   } else {
     alreadyReacted = false;
+  }
+}
+void ButtonsAction(){
+  for(int i=0; i < sizeof(buttonPins); i++){
+    if(digitalRead(buttonPins[i]) == LOW){
+      Keyboard.write(buttonKeys[i]);
+      Serial.println(buttonColours[i]);
+    }
   }
 }
 

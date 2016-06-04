@@ -34,7 +34,7 @@ void setup() {
   }
   //initialise buttons
   for(int i = 0; i < sizeof(buttonPins);i++){
-    pinMode(buttonPins[i], INPUT);
+    pinMode(buttonPins[i], INPUT_PULLUP);
   }
 }
 

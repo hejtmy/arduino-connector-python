@@ -122,7 +122,6 @@ void PhotoresistorAction(){
       alreadyReacted = false;
     }
   }
-  
 }
 void ButtonsAction(){
   for(int i=0; i < numberOfButtons; i++){

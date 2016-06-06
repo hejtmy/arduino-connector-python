@@ -5,6 +5,7 @@ Created on Mon Feb  8 19:26:38 2016
 """
 
 import serial
+import serial.threaded
 from helpers import serial_ports
 
 class Arduino():
@@ -21,7 +22,7 @@ class Arduino():
         connection = self._try_ports();
         if(connection):
             self.arduinoConnection = connection
-            self._send_prepared()
+            self._initialise_connection()
 
     def is_open(self):
         return (self.arduinoConnection.isOpen())
@@ -120,7 +121,9 @@ class Arduino():
             return True
         else:
             return False
-
+    def _initialise_connection(self):
+        self.arduinoConnection.data_received()
+        self._send_prepared()
 
     def _send_prepared(self):
         self._send_message("DONE")

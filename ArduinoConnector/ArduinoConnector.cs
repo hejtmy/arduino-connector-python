@@ -1,14 +1,25 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO.Ports;
 
 namespace ArduinoConnector
 {
     public enum ArduinoType {Leonardo, Uno, Generic}
-    public enum ArduinoEvent { DONE}
+    public enum ArduinoEvent {DONE, RED, GREEN, YELLOW, BLUE}
+
     public class Arduino
     {
         public delegate void SerialInputHandler(ArduinoEvent arduinoEvent);
         public event SerialInputHandler DataIncomming;
+
+        public Dictionary<string, ArduinoEvent> ArduinoEventDictionary = new Dictionary<string, ArduinoEvent>
+        {
+            {"BLUE",ArduinoEvent.BLUE},
+            { "GREEN",ArduinoEvent.GREEN},
+            {"RED", ArduinoEvent.RED},
+            {"YELLOW", ArduinoEvent.YELLOW},
+            {"DONE", ArduinoEvent.DONE}
+        };
 
         private SerialPort _port;
         private string _comPort;
@@ -209,13 +220,16 @@ namespace ArduinoConnector
                 string indata = sp.ReadLine();
                 //clear input from arduino is "DONE\r\n" - serial has default setting newline character to \n 
                 //It can be either changed to \r\n in serial setup or we just cheat it like this
-                switch (indata)
+                var indataCleared = indata.Replace("\r","");
+                ArduinoEvent arduinoEvent;
+                if (ArduinoEventDictionary.TryGetValue(indataCleared, out arduinoEvent))
                 {
-                    case "DONE\r":
-                        DataIncomming(ArduinoEvent.DONE);
-                        break;
-                    default:
-                        break;
+                    // Key was in dictionary; "value" contains corresponding value
+                    DataIncomming(arduinoEvent);
+                }
+                else
+                {
+                    // Key wasn't in dictionary; "value" is now 0
                 }
             }
         }

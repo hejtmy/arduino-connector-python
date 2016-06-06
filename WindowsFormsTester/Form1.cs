@@ -75,15 +75,16 @@ namespace WindowsFormsApplication1
         private void PrintLine(ArduinoEvent arduinoEvent)
         {
             Console.Write(arduinoEvent.ToString());
+            label8.Invoke((MethodInvoker)delegate {
+                label8.Text = arduinoEvent.ToString();
+            });
             if (stopwatch == null) return;
             if (!stopwatch.IsRunning) return;
             stopwatch.Stop();
             label7.Invoke((MethodInvoker)delegate {
                 label7.Text = stopwatch.ElapsedMilliseconds.ToString();
             });
- 
         }
-
         private void StartStopwatch()
         {
             if (stopwatch == null) stopwatch = Stopwatch.StartNew();

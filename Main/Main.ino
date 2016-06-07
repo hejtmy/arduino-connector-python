@@ -29,7 +29,6 @@ char untilChar = '\!';
 
 // the setup function runs once when you press reset or power the board
 void setup() {
-  Keyboard.begin();
   Serial.begin(9600);
   Serial.setTimeout(timeout);
   while (!Serial) {
@@ -76,10 +75,12 @@ void LettingKnow() {
   }
 }
 void Connect(){
+  Keyboard.begin();
   connected = true;
 }
 void Disconnect(){
   connected = false;
+  Keyboard.end();
 }
 void ListenForOrders() {
   if (serialInput != "") {
@@ -123,9 +124,14 @@ void Blink(){
 }
 void StartPhotoresistor(){
   photoresistorUse = true;
+  CalibratePhotoresistor();
 }
 void StopPhotoresistor(){
   photoresistorUse = false;
+}
+void CalibratePhotoresistor(){
+  //should do differently?
+  photoresistorThreshold = analogRead(photoresistorPin);
 }
 void PhotoresistorAction(){
   if(digitalRead(7) == LOW){

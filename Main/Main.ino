@@ -112,6 +112,10 @@ void ListenForOrders() {
       StopPhotoresistor();
       SendDone();
     }
+    if (serialInput == "PHOTO-CALIBRATE") {
+      CalibratePhotoresistor();
+      SendDone();
+    }
   }
 }
 void SendDone(){

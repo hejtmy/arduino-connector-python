@@ -46,7 +46,7 @@ void loop() {
   serialInput = Serial.readStringUntil(untilChar);
   if (serialInput != "") {
     if (serialInput == "WHO") {
-      lettingKnow();
+      LettingKnow();
     }
     if (connected) {
       ListenForOrders();
@@ -59,55 +59,73 @@ void loop() {
     ButtonsAction();
   }
 }
-
-void lettingKnow() {
+void LettingKnow() {
   float time = millis();
   while (true) {
     serialInput = Serial.readStringUntil(untilChar);
     if (serialInput == "DONE") {
-      connected = true;
+      Connect();
       break;
     }
     Serial.println("ARDUINO");
     if (millis() - time > 1000) {
+      Serial.println("TIME IS UP");
       break;
     }
     delay(speed);
   }
 }
+void Connect(){
+  connected = true;
+}
+void Disconnect(){
+  connected = false;
+}
 void ListenForOrders() {
   if (serialInput != "") {
     if (serialInput == "RESTART") {
-      connected = false;
-      Serial.println("DONE");
+      Disconnect();
+      SendDone();
     }
-    if (serialInput == "SENDPULSE") {
-      Serial.println("DONE");
+    if (serialInput == "DISCONNECT") {
+      Disconnect();
+      SendDone();
     }
     if (serialInput == "PULSE+") {
       StartPulse();
-      Serial.println("DONE");
+      SendDone();
     }
     if (serialInput == "PULSE-") {
       CancelPulse();
-      Serial.println("DONE");
+      SendDone();
     }
     if (serialInput == "BLINK") {
-      digitalWrite(13, HIGH);
-      delay(100);
-      digitalWrite(13, LOW);
-      Serial.println("DONE");
+      Blink();
+      SendDone();
     }
     if (serialInput == "PHOTO+") {
-      photoresistorUse = true;
-      Serial.println("DONE");
+      StartPhotoresistor();
+      SendDone();
     }
     if (serialInput == "PHOTO-") {
-      photoresistorUse = false;
-      Serial.println("DONE");
+      StopPhotoresistor();
+      SendDone();
     }
   }
-  delay(speed);
+}
+void SendDone(){
+  Serial.println("DONE");
+}
+void Blink(){
+  digitalWrite(13, HIGH);
+  delay(100);
+  digitalWrite(13, LOW);
+}
+void StartPhotoresistor(){
+  photoresistorUse = true;
+}
+void StopPhotoresistor(){
+  photoresistorUse = false;
 }
 void PhotoresistorAction(){
   if(digitalRead(7) == LOW){

@@ -82,10 +82,13 @@ void Disconnect(){
   connected = false;
   Keyboard.end();
 }
+void Restart(){
+  Disconnect();
+}
 void ListenForOrders() {
   if (serialInput != "") {
     if (serialInput == "RESTART") {
-      Disconnect();
+      Restart();
       SendDone();
     }
     if (serialInput == "DISCONNECT") {

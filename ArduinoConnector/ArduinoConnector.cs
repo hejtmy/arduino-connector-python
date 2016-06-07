@@ -20,7 +20,6 @@ namespace ArduinoConnector
             {"YELLOW", ArduinoEvent.YELLOW},
             {"DONE", ArduinoEvent.DONE}
         };
-
         private SerialPort _port;
         private string _comPort;
 
@@ -64,7 +63,7 @@ namespace ArduinoConnector
             if (IsOpen())
             {
                 _port.DataReceived -= SendIncommingData;
-                SendMessage("RESTART");
+                SendMessage("DISCONNECT");
                 _port.Close();
             }   
         }
@@ -72,31 +71,13 @@ namespace ArduinoConnector
         {
             return _port;
         }
+        /// <summary>
+        /// Clears the connection and possible clutter and bad settings that might hang from previous connections
+        /// </summary>
         public void Restart()
         {
-            if (IsOpen())
-            {
-                _port.DataReceived -= SendIncommingData;
-                SendMessage("RESTART");
-                return;
-            }
-            SerialPort port;
-            if (!String.IsNullOrEmpty(_comPort))
-            {
-                port = SetupConnection(_comPort);
-                if (port.IsOpen)
-                {
-                    SendMessage("RESTART", port);
-                    return;
-                }
-            }
-            //otherwise we loop through all the way - will redo in the future.
-            foreach (string portName in SerialPort.GetPortNames())
-            {
-                var comPort = portName;
-                port = SetupConnection(comPort);
-                if (port.IsOpen) SendMessage("RESTART", port);
-            }
+            ResetArduinoConnection();
+            Connect();
         }
         public void Blink()
         {
@@ -209,6 +190,35 @@ namespace ArduinoConnector
         private void SendDone(SerialPort port)
         {
             port.WriteLine("DONE!");
+        }
+        /// <summary>
+        /// Resets the arduino settings by sending the reset command. If the connector is connected it also disconnects from the board
+        /// </summary>
+        private void ResetArduinoConnection()
+        {
+            if (IsOpen())
+            {
+                SendMessage("RESTART");
+                Disconnect();
+                return;
+            }
+            SerialPort port;
+            if (!String.IsNullOrEmpty(_comPort))
+            {
+                port = SetupConnection(_comPort);
+                if (port.IsOpen)
+                {
+                    SendMessage("RESTART", port);
+                    return;
+                }
+            }
+            //otherwise we loop through all the way - will redo in the future.
+            foreach (string portName in SerialPort.GetPortNames())
+            {
+                var comPort = portName;
+                port = SetupConnection(comPort);
+                if (port.IsOpen) SendMessage("RESTART", port);
+            }
         }
         #endregion
         #region Event handling

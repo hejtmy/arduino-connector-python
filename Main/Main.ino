@@ -29,7 +29,6 @@ char untilChar = '\!';
 
 // the setup function runs once when you press reset or power the board
 void setup() {
-  Keyboard.begin();
   Serial.begin(9600);
   Serial.setTimeout(timeout);
   while (!Serial) {
@@ -46,7 +45,7 @@ void loop() {
   serialInput = Serial.readStringUntil(untilChar);
   if (serialInput != "") {
     if (serialInput == "WHO") {
-      lettingKnow();
+      LettingKnow();
     }
     if (connected) {
       ListenForOrders();
@@ -59,55 +58,87 @@ void loop() {
     ButtonsAction();
   }
 }
-
-void lettingKnow() {
+void LettingKnow() {
   float time = millis();
   while (true) {
     serialInput = Serial.readStringUntil(untilChar);
     if (serialInput == "DONE") {
-      connected = true;
+      Connect();
       break;
     }
     Serial.println("ARDUINO");
     if (millis() - time > 1000) {
+      Serial.println("TIME IS UP");
       break;
     }
     delay(speed);
   }
 }
+void Connect(){
+  Keyboard.begin();
+  connected = true;
+}
+void Disconnect(){
+  connected = false;
+  Keyboard.end();
+}
+void Restart(){
+  Disconnect();
+}
 void ListenForOrders() {
   if (serialInput != "") {
     if (serialInput == "RESTART") {
-      connected = false;
-      Serial.println("DONE");
+      Restart();
+      SendDone();
     }
-    if (serialInput == "SENDPULSE") {
-      Serial.println("DONE");
+    if (serialInput == "DISCONNECT") {
+      Disconnect();
+      SendDone();
     }
     if (serialInput == "PULSE+") {
       StartPulse();
-      Serial.println("DONE");
+      SendDone();
     }
     if (serialInput == "PULSE-") {
       CancelPulse();
-      Serial.println("DONE");
+      SendDone();
     }
     if (serialInput == "BLINK") {
-      digitalWrite(13, HIGH);
-      delay(100);
-      digitalWrite(13, LOW);
-      Serial.println("DONE");
+      Blink();
+      SendDone();
     }
     if (serialInput == "PHOTO+") {
-      photoresistorUse = true;
-      Serial.println("DONE");
+      StartPhotoresistor();
+      SendDone();
     }
     if (serialInput == "PHOTO-") {
-      photoresistorUse = false;
-      Serial.println("DONE");
+      StopPhotoresistor();
+      SendDone();
+    }
+    if (serialInput == "PHOTO-CALIBRATE") {
+      CalibratePhotoresistor();
+      SendDone();
     }
   }
-  delay(speed);
+}
+void SendDone(){
+  Serial.println("DONE");
+}
+void Blink(){
+  digitalWrite(13, HIGH);
+  delay(100);
+  digitalWrite(13, LOW);
+}
+void StartPhotoresistor(){
+  photoresistorUse = true;
+  CalibratePhotoresistor();
+}
+void StopPhotoresistor(){
+  photoresistorUse = false;
+}
+void CalibratePhotoresistor(){
+  //should do differently?
+  photoresistorThreshold = analogRead(photoresistorPin);
 }
 void PhotoresistorAction(){
   if(digitalRead(7) == LOW){

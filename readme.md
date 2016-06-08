@@ -3,7 +3,9 @@ Adruino connector is a python library for your projects that allows communicatio
 The other python files are testeres and helpers.
 
 Requirements:
-[pyserial 3.1+])(https://github.com/pyserial/pyserial)
+
+[pyserial 3.1+](https://github.com/pyserial/pyserial)
+
 Python 3.1 +
 
 #How to work with this

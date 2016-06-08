@@ -1,6 +1,12 @@
 import tkinter as tk
 from Arduino import *
-arduino = Arduino(port="COM4")
+
+class MyArduino(Arduino):
+    def arduino_done(self):
+        #self.blink()
+        text.insert('end', "DONE")
+
+arduino = MyArduino(port="COM4")
 arduino.connect()
 
 def onKeyPress(event):
@@ -21,6 +27,5 @@ root.geometry('300x200')
 text = tk.Text(root, background='black', foreground='white', font=('Comic Sans MS', 12))
 text.pack()
 root.bind('<KeyPress>', onKeyPress)
+text.insert('end', 'Press enter to blink. Escape to disconnect. Space to connect')
 root.mainloop()
-
-text.insert('end', 'Press enter to blink. Escaoe to disconnect. Space to connect')

@@ -3,17 +3,18 @@
 Created on Mon Feb  8 19:26:38 2016
 @author: Smoothie
 """
-
+import threading
 import serial
 import serial.threaded
 from helpers import serial_ports
 
 class Arduino():
-    def __init__(self, port="COM5", baudrate=9600, timeout=0.05):
+    def __init__(self, port="COM5", baudrate=9600, timeout=0.05, threading = True):
         self.arduinoConnection = serial.Serial()
         self.arduinoConnection.port = port
         self.arduinoConnection.timeout = timeout
         self.arduinoConnection.baudrate = baudrate
+        self._threading = threading
 
     # Public API
 
@@ -30,6 +31,7 @@ class Arduino():
     def disconnect(self):
         if (self.is_open()):
             self._send_message("RESET")
+            if self._threading: self._stop_threading()
             self.arduinoConnection.close()
 
     def reset(self):
@@ -41,13 +43,14 @@ class Arduino():
     Slightly modified readline that converts the byte data to utf-8 format
     '''
     def readline(self, connection=None):
-        if connection is None:
-            connection = self.arduinoConnection
+        if connection is None: connection = self.arduinoConnection
+        if not connection.isOpen(): return None
         try:
-            line = connection.readline();
-            return line.decode("utf-8");
+            line = connection.readline()
+            return line.decode("utf-8")
         except Exception as ex:
             print(ex)
+            return None
 
     # Experimental functions
 
@@ -70,6 +73,9 @@ class Arduino():
     def photoresistor_stop(self):
         if self.is_open():
             self._send_message("PHOTO-")
+
+    def arduino_done(self):
+        return None;
 
     # PRIVATE CONNECTION PART
     '''
@@ -122,12 +128,26 @@ class Arduino():
         else:
             return False
     def _initialise_connection(self):
-        self.arduinoConnection.data_received()
+        if self._threading: self._start_threading()
         self._send_prepared()
+    '''
+    Threading functionality - still occasionally buggy
+    '''
+    def _start_threading(self):
+        self.read_thread = threading.Thread(target=self._check_incoming, daemon=True)
+        self.read_thread.start()
+    def _stop_threading(self):
+        self.read_thread = None
+    def _check_incoming(self):
+        while(self.is_open()):
+
+            line = self.readline();
+            if line is not None:
+                if ("DONE" in line):
+                    self.arduino_done()
 
     def _send_prepared(self):
         self._send_message("DONE")
-
     def _send_message(self, message):
         message = message + "!"
         byteMessage = message.encode("utf-8")

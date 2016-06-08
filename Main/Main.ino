@@ -89,11 +89,9 @@ void ListenForOrders() {
   if (serialInput != "") {
     if (serialInput == "RESTART") {
       Restart();
-      SendDone();
     }
     if (serialInput == "DISCONNECT") {
       Disconnect();
-      SendDone();
     }
     if (serialInput == "PULSE+") {
       StartPulse();
@@ -170,4 +168,3 @@ void CancelPulse(){
   pulsing = false; // no fuctionality yet
   digitalWrite(pulsePin, LOW);
 }
-

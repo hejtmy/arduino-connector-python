@@ -4,25 +4,40 @@ Two other projects are testers for the dll.
 
 #How to work with this
 1. Upload .ino to the arduino.
-2. Add the dll to your project.
+
+2. Add the Arduino.py to your project
 3. Instantiate Arduino class
-  ```c#
-  var arduino = new ArduinoConnector(ArduinoType.Leonardo)
-  if(arduino.Connect()) Debug.Log('Connects');
+  ```python
+  arduino = Arduino()
+  arduino.Connect()
   ```
 
 4. Play with it
-  ```c#
-  arduino.Blink();
-
-  void PrintLine(ArduinoEvent arduinoEvent){Console.Write(arduinoEvent.ToString());};
-  arduino.DataIncomming += PrintLine;
-
-  adruino.SendPulse(true);
-  adruino.SendPulse(false);
+  ```python
+  arduino.blink()
+  arduino.send_pulse_up()
+  arduino.send_pulse_down()
   ```
 
 5. Disconnect
-  ```c#
-  arduino.Disconnect();
+  ```python
+  arduino.disconnect();
   ```
+
+## Photoresistor functionality
+  
+## Threading
+If you want to use the threading capabilities there are some more advanced changes needed. Mainly you need to change the arduino class to include your own implementation of threaded methods.
+
+```python
+	arduino = Arduino(threading = True)
+```
+
+###Methods
+These are some of the methods that you can override to achieve needed functionality
+#### arduino done
+```python
+	class MyArduino(Arduino):
+		def arduino_done(self):
+			print("I am done")
+```

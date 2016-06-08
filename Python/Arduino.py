@@ -9,7 +9,7 @@ import serial.threaded
 from helpers import serial_ports
 
 class Arduino():
-    def __init__(self, port="COM5", baudrate=9600, timeout=0.05, threading = True):
+    def __init__(self, port="COM5", baudrate=9600, timeout=0.05, threading = False):
         self.arduinoConnection = serial.Serial()
         self.arduinoConnection.port = port
         self.arduinoConnection.timeout = timeout

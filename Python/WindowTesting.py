@@ -18,9 +18,15 @@ def onKeyPress(event):
     if key == 27:  # ESC
         text.insert('end', "Disconnecting")
         arduino.disconnect()
-    elif key == 13:  # Enter
+    if key == 13:  # Enter
         text.insert('end', "Blinking")
         arduino.blink()
+    if key == 83: #s
+        text.insert('end', "PULSING")
+        arduino.send_pulse_up()
+    if key == 75: #k
+        text.insert('end', "STOPPING")
+        arduino.send_pulse_down()
 
 root = tk.Tk()
 root.geometry('300x200')

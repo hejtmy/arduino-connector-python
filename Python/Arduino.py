@@ -64,7 +64,7 @@ class Arduino():
 
     def send_pulse_down(self):
         if self.is_open():
-            self._send_message("PULSE+")
+            self._send_message("PULSE-")
 
     def photoresistor_start(self):
         if self.is_open():

@@ -6,7 +6,7 @@ Created on Mon Feb  8 19:26:38 2016
 import threading
 import serial
 import serial.threaded
-from helpers import serial_ports
+from connector.Python.helpers import serial_ports
 
 class Arduino():
     def __init__(self, port="COM5", baudrate=9600, timeout=0.05, threading = False):
@@ -76,7 +76,8 @@ class Arduino():
 
     def arduino_done(self):
         return None;
-
+    def sensor_activated(self, line):
+        return None;
     # PRIVATE CONNECTION PART
     '''
     Firstly the last known port is tried, if there is any.
@@ -107,6 +108,7 @@ class Arduino():
         connection.port = port
         connection.rts = True
         connection.dtr = True
+        connection.timeout = self.arduinoConnection.timeout
         try:
             connection.open()
         except Exception as ex:
@@ -121,12 +123,13 @@ class Arduino():
     If there is ARDUINO by message in the response, function returns TRUE, otherwise False
     '''
     def _test_connection(self, connection):
-        connection.write(b'WHO!')
+        self._serial_send_message(connection, 'WHO')
         line = self.readline(connection);
         if("ARDUINO" in line):
             return True
         else:
             return False
+        
     def _initialise_connection(self):
         if self._threading: self._start_threading()
         self._send_prepared()
@@ -140,16 +143,20 @@ class Arduino():
         self.read_thread = None
     def _check_incoming(self):
         while(self.is_open()):
-
             line = self.readline();
             if line is not None:
                 if ("DONE" in line):
                     self.arduino_done()
+                if ("SENSOR" in line):
+                    self.sensor_activated(line)
 
     def _send_prepared(self):
         self._send_message("DONE")
+
     def _send_message(self, message):
+        self._serial_send_message(self.arduinoConnection,message)
+
+    def _serial_send_message(self, connection, message):
         message = message + "!"
         byteMessage = message.encode("utf-8")
-        #bytearray(message,"utf-8")
-        self.arduinoConnection.write(byteMessage)
+        connection.write(byteMessage)

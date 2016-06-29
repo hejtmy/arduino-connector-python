@@ -6,7 +6,8 @@ Created on Mon Feb  8 19:26:38 2016
 import threading
 import serial
 import serial.threaded
-from connector.Python.helpers import serial_ports
+import sys
+import glob
 
 class Arduino():
     def __init__(self, port="COM5", baudrate=9600, timeout=0.05, threading = False):
@@ -160,3 +161,30 @@ class Arduino():
         message = message + "!"
         byteMessage = message.encode("utf-8")
         connection.write(byteMessage)
+
+def serial_ports(upTo = 256):
+    """ Lists serial port names
+        :raises EnvironmentError:
+            On unsupported or unknown platforms
+        :returns:
+            A list of the serial ports available on the system
+    """
+    if sys.platform.startswith('win'):
+        ports = ['COM%s' % (i + 1) for i in range(upTo)]
+        print(ports)
+    elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
+        # this excludes your current terminal "/dev/tty"
+        ports = glob.glob('/dev/tty[A-Za-z]*')
+    elif sys.platform.startswith('darwin'):
+        ports = glob.glob('/dev/tty.*')
+    else:
+        raise EnvironmentError('Unsupported platform')
+    result = []
+    for port in ports:
+        try:
+            s = serial.Serial(port)
+            s.close()
+            result.append(port)
+        except (OSError, serial.SerialException):
+            pass
+    return result

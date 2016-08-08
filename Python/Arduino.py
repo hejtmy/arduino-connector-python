@@ -32,7 +32,7 @@ class Arduino:
 
     def disconnect(self):
         if self.is_open():
-            self._send_message("RESET")
+            self._send_message("DISCONNECT")
             if self._threading:
                 self._stop_threading()
             self.arduinoConnection.close()
@@ -98,7 +98,7 @@ class Arduino:
             connection = self._try_connect(self.arduinoConnection.port)
             if connection:
                 return connection
-        ports = serial_ports(10)  # returns a list of open ports depending on the platform
+        ports = serial_ports(32)  # returns a list of open ports depending on the platform
         for port in ports:
             connection = self._try_connect(port)
             if connection:
@@ -181,7 +181,7 @@ class Arduino:
         connection.write(byte_message)
 
 
-def serial_ports(up_to=256):
+def serial_ports(up_to = 256):
 
     """ Lists serial port names
         :raises EnvironmentError:

@@ -15,7 +15,7 @@ Python 3.1 +
 3. Instantiate Arduino class
   ```python
   arduino = Arduino()
-  arduino.Connect()
+  arduino.connect()
   ```
 
 4. Play with it

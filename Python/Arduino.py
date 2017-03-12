@@ -21,7 +21,7 @@ class Arduino:
         self.arduinoConnection.port = port
         self.arduinoConnection.timeout = timeout
         self.arduinoConnection.baudrate = baudrate
-        self.arduinoConnection.model = model
+        self.model = model
         self._threading = want_threading
 
     # Public API
@@ -124,7 +124,7 @@ class Arduino:
         connection = serial.Serial()
         connection.port = port
         connection.rts = True
-        connection.dtr = (self.arduinoConnection.model == ArduinoModel.Leonardo)
+        connection.dtr = (self.model == ArduinoModel.Leonardo)
         connection.timeout = self.arduinoConnection.timeout
         try:
             connection.open()

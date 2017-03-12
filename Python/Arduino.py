@@ -1,21 +1,27 @@
 # -*- coding: utf-8 -*-
 """
 Created on Mon Feb  8 19:26:38 2016
-@author: Smoothie
+@author: Smoothie & hejtmy
 """
 import threading
 import serial
 import serial.threaded
 import sys
 import glob
+from enum import Enum
 
+# Important because of rts settings in the serial port
+class ArduinoModel(Enum):
+    Leonardo = 1
+    Uno = 2
 
 class Arduino:
-    def __init__(self, port="COM5", baudrate=9600, timeout=0.05, want_threading=False):
+    def __init__(self, port = "COM5", baudrate = 9600, timeout = 0.05, model = ArduinoModel.Leonardo, want_threading = False):
         self.arduinoConnection = serial.Serial()
         self.arduinoConnection.port = port
         self.arduinoConnection.timeout = timeout
         self.arduinoConnection.baudrate = baudrate
+        self.arduinoConnection.model = model
         self._threading = want_threading
 
     # Public API
@@ -46,7 +52,7 @@ class Arduino:
     Slightly modified readline that converts the byte data to utf-8 format
     '''
 
-    def readline(self, connection=None):
+    def readline(self, connection = None):
         if connection is None:
             connection = self.arduinoConnection
         if not connection.isOpen():
@@ -118,7 +124,7 @@ class Arduino:
         connection = serial.Serial()
         connection.port = port
         connection.rts = True
-        connection.dtr = True
+        connection.dtr = (self.arduinoConnection.model == ArduinoModel.Leonardo)
         connection.timeout = self.arduinoConnection.timeout
         try:
             connection.open()
@@ -128,6 +134,8 @@ class Arduino:
             return
         if self._test_connection(connection):
             return connection
+        else:
+            return
 
     '''
     Returns True/False depending on reception of specific message
@@ -179,7 +187,6 @@ class Arduino:
     def _serial_send_message(connection, message):
         byte_message = (message + "!").encode("utf-8")
         connection.write(byte_message)
-
 
 def serial_ports(up_to = 256):
 

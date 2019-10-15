@@ -14,6 +14,7 @@ from enum import Enum
 class ArduinoModel(Enum):
     Leonardo = 1
     Uno = 2
+    Nano = 3
 
 class Arduino:
     def __init__(self, port = "COM5", baudrate = 9600, timeout = 0.05, model = ArduinoModel.Leonardo, want_threading = False):
@@ -58,7 +59,7 @@ class Arduino:
         if not connection.isOpen():
             return None
         try:
-            line = connection.readline()
+            line = connection.read(10)
             return line.decode("utf-8")
         except Exception as ex:
             print(ex)
@@ -147,6 +148,7 @@ class Arduino:
     def _test_connection(self, connection):
         self._serial_send_message(connection, 'WHO')
         line = self.readline(connection)
+        print(line)
         if "ARDUINO" in line:
             return True
         else:
@@ -189,7 +191,6 @@ class Arduino:
         connection.write(byte_message)
 
 def serial_ports(up_to = 256):
-
     """ Lists serial port names
         :raises EnvironmentError:
             On unsupported or unknown platforms

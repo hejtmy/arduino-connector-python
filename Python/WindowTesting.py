@@ -6,11 +6,11 @@ class MyArduino(Arduino):
         #self.blink()
         text.insert('end', "DONE")
 
-arduino = MyArduino(port="COM4")
+arduino = MyArduino(port="COM6", model=ArduinoModel.Nano)
 arduino.connect()
 
 def onKeyPress(event):
-    key = ord(event.char);
+    key = ord(event.char)
     if key == 32:  # space
         arduino.connect()
         if(arduino.is_open()): text.insert('end', "Connected")
